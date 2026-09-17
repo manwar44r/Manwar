@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MANWAR - Smart Discoveries & Viral Deals</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #f8fafc; font-family: 'Poppins', sans-serif; color: #1e293b; padding-bottom: 60px; }
+
+    header {
+      background: #ffffff;
+      padding: 22px 16px 16px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .stark-brand { display: inline-block; }
+    .stark-logo {
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      font-size: 32px;
+      font-weight: 900;
+      font-style: italic;
+      letter-spacing: 4px;
+      color: #0f172a;
+      position: relative;
+      padding-bottom: 4px;
+      display: inline-block;
+    }
+    .stark-logo::after {
+      content: '';
+      position: absolute;
+      left: -20px;
+      right: -25px;
+      bottom: 0;
+      height: 3px;
+      background: #0f172a;
+    }
+    .stark-tagline {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 2px;
+      margin-top: 8px;
+    }
+
+    .container { max-width: 950px; margin: 0 auto; padding: 16px 12px; }
+
+    .search-box { margin-bottom: 14px; }
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+    .filters::-webkit-scrollbar { display: none; }
+    .btn-filter {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .btn-filter.active { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+
+    .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 8px; }
+    @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .source-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 4px;
+      z-index: 2;
+    }
+    .discount-tag {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 4px;
+      z-index: 2;
+    }
+    .card-img-wrap { width: 100%; height: 160px; background: #f8fafc; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .card-content { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.35;
+      height: 36px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 12px; }
+    .price { font-size: 17px; font-weight: 700; color: #0f172a; }
+    .cut-price { font-size: 12px; color: #94a3b8; text-decoration: line-through; }
+
+    .btn-buy {
+      margin-top: auto;
+      display: block;
+      text-align: center;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 9px 0;
+      border-radius: 6px;
+    }
+    .btn-buy:hover { background: #334155; }
+    .loading-msg { text-align: center; padding: 40px; color: #64748b; font-size: 14px; grid-column: span 2; }
+
+    footer { text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="stark-brand">
+      <div class="stark-logo">MANWAR</div>
+      <div class="stark-tagline">SMART DISCOVERIES & VIRAL FINDS // UNDER ₹10,000</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search viral accessories, room decor, tech...">
+    </div>
+
+    <div class="filters">
+      <button class="btn-filter active" onclick="filterItems('all', this)">All Deals</button>
+      <button class="btn-filter" onclick="filterItems('Amazon', this)">Amazon</button>
+      <button class="btn-filter" onclick="filterItems('Flipkart', this)">Flipkart</button>
+      <button class="btn-filter" onclick="filterItems('Meesho', this)">Meesho</button>
+      <button class="btn-filter" onclick="filterItems('under499', this)">Under ₹499</button>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <div class="loading-msg">Fetching live deals...</div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 MANWAR ENTERPRISES • Auto-curated Deals Protocol</p>
+  </footer>
+
+  <script>
+    let allProducts = [];
+    let activeFilter = 'all';
+
+    fetch('products.json')
+      .then(res => res.json())
+      .then(data => {
+        allProducts = data;
+        renderProducts(allProducts);
+      })
+      .catch(() => {
+        document.getElementById('productGrid').innerHTML = '<div class="loading-msg">Deals updating via bot... Refresh in a few minutes.</div>';
+      });
+
+    function renderProducts(items) {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        grid.innerHTML = '<div class="loading-msg">No products found matching your filter.</div>';
+        return;
+      }
+
+      items.forEach(p => {
+        const discount = Math.round(((p.cut_price - p.price) / p.cut_price) * 100);
+        grid.innerHTML += `
+          <div class="card" data-store="${p.store}" data-price="${p.price}" data-title="${p.title}">
+            <span class="source-tag">${p.store}</span>
+            <span class="discount-tag">${discount > 0 ? discount + '% OFF' : 'DEAL'}</span>
+            <div class="card-img-wrap">
+              <img src="${p.image}" alt="${p.title}" loading="lazy">
+            </div>
+            <div class="card-content">
+              <div class="card-title">${p.title}</div>
+              <div class="price-row">
+                <span class="price">₹${p.price}</span>
+                <span class="cut-price">₹${p.cut_price}</span>
+              </div>
+              <a href="${p.link}" target="_blank" class="btn-buy">Buy on ${p.store} →</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = allProducts.filter(p => {
+        const matchesQuery = p.title.toLowerCase().includes(query);
+        let matchesFilter = true;
+        if (activeFilter === 'under499') matchesFilter = p.price <= 499;
+        else if (activeFilter !== 'all') matchesFilter = p.store.toLowerCase() === activeFilter.toLowerCase();
+        return matchesQuery && matchesFilter;
+      });
+      renderProducts(filtered);
+    }
+
+    function filterItems(type, btn) {
+      activeFilter = type;
+      document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+  </script>
+</body>
+</html>
