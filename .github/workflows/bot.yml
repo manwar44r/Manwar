@@ -1,0 +1,35 @@
+name: Auto Update Manwar Deals
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Har 6 ghante me apne aap chalega
+  workflow_dispatch:      # 1-Click manual test run button
+
+permissions:
+  contents: write
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run Bot Scraper
+        run: python master_bot.py
+
+      - name: Commit and Push New Products
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add products.json
+          git commit -m "Auto-update deals" || exit 0
+          git push
